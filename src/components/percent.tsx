@@ -1,0 +1,24 @@
+"use client"
+
+import { Item } from "./items"
+
+type Props = {
+  items: Item[]
+}
+
+export default function Percent({ items }: Props) {
+  const completedCount = items.filter(item => item.isChecked).length
+  const progress = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0
+
+  return (
+    <div className="mb-4">
+      <p className="mb-1 text-gray-700 font-medium">進捗: {progress}%</p>
+      <div className="w-full h-4 bg-gray-200 rounded">
+        <div
+          className="h-4 bg-green-400 rounded transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  )
+}

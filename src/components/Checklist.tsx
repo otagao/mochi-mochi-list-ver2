@@ -4,12 +4,14 @@ import { useState } from "react"
 import ChecklistItem from "./ChecklistItem"
 import ChecklistInput from "./ChecklistInput"
 import ChecklistDropzone from "./ChecklistDropzone"
+import Percent from "./percent"
 import { initialItems, Item } from "./items"
 import ChecklistExporter from "./ChecklistExporter"
 
 export default function Checklist() {
   const [items, setItems] = useState<Item[]>(initialItems)
 
+  // チェックボックスのON/OFF
   const toggleItem = (id: string) => {
     setItems(prev =>
       prev.map(item =>
@@ -18,10 +20,12 @@ export default function Checklist() {
     )
   }
 
+  // 削除
   const deleteItem = (id: string) => {
     setItems(prev => prev.filter(item => item.id !== id))
   }
 
+  // 追加
   const addItem = (text: string) => {
     setItems(prev => [
       ...prev,
@@ -31,8 +35,13 @@ export default function Checklist() {
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
+      {/* タイトル */}
       <h1 className="text-xl font-bold mb-4">もちもちリスト</h1>
 
+      {/* ✅ 進捗バー */}
+      <Percent items={items} />
+
+      {/* チェックリスト */}
       <ul className="space-y-2">
         {items.map(item => (
           <ChecklistItem
