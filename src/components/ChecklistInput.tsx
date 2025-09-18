@@ -25,7 +25,7 @@ export default function ChecklistInput({ onAdd }: Props) {
         className="flex-1 border rounded p-2"
       />
       <button type="submit" className="px-4 py-2 text-white rounded"
-      style={{backgroundColor: "#4a8c52" }}>
+      style={{backgroundColor: "#5fa768" }}>
         追加
       </button>
     </form>
