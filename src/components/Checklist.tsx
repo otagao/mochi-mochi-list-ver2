@@ -33,6 +33,15 @@ export default function Checklist() {
     ])
   }
 
+  // 更新
+  const updateItem = (id: string, newText: string) => {
+    setItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, text: newText } : item
+      )
+    )
+  }
+
   //  ソート
   const sortedItems = [...items].sort((a, b) => {
     return Number(a.isChecked) - Number(b.isChecked)
