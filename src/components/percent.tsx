@@ -13,11 +13,18 @@ export default function Percent({ items }: Props) {
   return (
     <div className="mb-4">
       <p className="mb-1 text-gray-700 font-medium">進捗: {progress}%</p>
-      <div className="w-full h-4 bg-gray-200 rounded">
-        <div
-          className="h-4 bg-green-400 rounded transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
+     <div
+  className="w-full h-4 rounded shadow-md"
+  style={{ backgroundColor: "#fffffe" }} // 背景色を#fffffeに設定
+>
+       <div
+  className="h-4 rounded transition-all duration-300"
+  style={{
+    width: `${progress}%`,
+    background: "linear-gradient(to right, #f7bcc1, #c1345d)",
+  }}
+/>
+
       </div>
     </div>
   )
