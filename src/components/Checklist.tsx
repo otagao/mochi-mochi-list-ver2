@@ -33,6 +33,12 @@ export default function Checklist() {
     ])
   }
 
+  //  ソート
+  const sortedItems = [...items].sort((a, b) => {
+    return Number(a.isChecked) - Number(b.isChecked)
+  })
+
+
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
       {/* タイトル */}
@@ -43,7 +49,7 @@ export default function Checklist() {
 
       {/* チェックリスト */}
       <ul className="space-y-2">
-        {items.map(item => (
+        {sortedItems.map(item => (
           <ChecklistItem
             key={item.id}
             item={item}
