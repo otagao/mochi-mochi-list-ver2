@@ -8,9 +8,11 @@ type Props = {
   onToggle: (id: string) => void
   onDelete: (id: string) => void
   onUpdate: (id: string, newText: string) => void
+  onToggleProcured?: (id: string) => void
+  twoStageMode?: boolean
 }
 
-export default function ChecklistItem({ item, onToggle, onDelete, onUpdate }: Props) {
+export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onToggleProcured, twoStageMode }: Props) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(item.text)
 
@@ -49,36 +51,89 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate }: Pr
         }`}
     >
       <div className="flex items-center gap-4">
-        {/* チェックボックス */}
-        <div className="relative">
-          <input
-            type="checkbox"
-            id={item.id}
-            checked={item.isChecked}
-            onChange={() => onToggle(item.id)}
-            className="sr-only"
-          />
-          <label
-            htmlFor={item.id}
-            className={`flex items-center justify-center w-6 h-6 rounded-md border cursor-pointer
-              ${item.isChecked
-                ? "bg-dango-green-400 border-dango-green-500"
-                : "bg-white border-gray-300 group-hover:border-dango-pink-300"
-              }`}
-          >
-            {item.isChecked && (
-              <svg
-                className="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
+        {/* 二段階チェックボックス */}
+        {twoStageMode && onToggleProcured && (
+          <div className="flex gap-2">
+            {/* 調達チェック */}
+            <div className="relative">
+              <input
+                type="checkbox"
+                id={`${item.id}-procured`}
+                checked={item.isProcured || false}
+                onChange={() => onToggleProcured(item.id)}
+                className="sr-only"
+              />
+              <label
+                htmlFor={`${item.id}-procured`}
+                className={`flex items-center justify-center w-6 h-6 rounded-md border cursor-pointer
+                  ${item.isProcured
+                    ? "bg-dango-pink-400 border-dango-pink-500"
+                    : "bg-white border-gray-300 group-hover:border-dango-pink-300"
+                  }`}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-          </label>
-        </div>
+                {item.isProcured && (
+                  <span className="text-white text-xs">📦</span>
+                )}
+              </label>
+            </div>
+
+            {/* カバンチェック */}
+            <div className="relative">
+              <input
+                type="checkbox"
+                id={item.id}
+                checked={item.isChecked}
+                onChange={() => onToggle(item.id)}
+                className="sr-only"
+              />
+              <label
+                htmlFor={item.id}
+                className={`flex items-center justify-center w-6 h-6 rounded-md border cursor-pointer
+                  ${item.isChecked
+                    ? "bg-dango-green-400 border-dango-green-500"
+                    : "bg-white border-gray-300 group-hover:border-dango-pink-300"
+                  }`}
+              >
+                {item.isChecked && (
+                  <span className="text-white text-xs">🎒</span>
+                )}
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 通常のチェックボックス */}
+        {!twoStageMode && (
+          <div className="relative">
+            <input
+              type="checkbox"
+              id={item.id}
+              checked={item.isChecked}
+              onChange={() => onToggle(item.id)}
+              className="sr-only"
+            />
+            <label
+              htmlFor={item.id}
+              className={`flex items-center justify-center w-6 h-6 rounded-md border cursor-pointer
+                ${item.isChecked
+                  ? "bg-dango-green-400 border-dango-green-500"
+                  : "bg-white border-gray-300 group-hover:border-dango-pink-300"
+                }`}
+            >
+              {item.isChecked && (
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </label>
+          </div>
+        )}
 
         {/* テキスト */}
         {isEditing ? (

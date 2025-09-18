@@ -24,16 +24,21 @@ export default function ChecklistImporter({ onImport }: Props) {
       const dataLines = lines.slice(1)
 
       const importedItems: Item[] = dataLines.map((line, index) => {
-        // 「"タスク名",完了」or 「"タスク名",未完了」
-        const [rawText, status] = line.split(",")
+        // CSV行をパース（カンマで分割、引用符を考慮）
+        const columns = line.split(",")
 
         // " で囲まれているので除去
-        const text = rawText?.replace(/^"|"$/g, "") || ""
+        const text = columns[0]?.replace(/^"|"$/g, "") || ""
+        const status = columns[1]?.trim()
+        const procuredStatus = columns[2]?.trim()
 
         return {
           id: Date.now().toString() + index, // 新しいユニークIDを割り振る
           text,
-          isChecked: status?.trim() === "完了",
+          isChecked: status === "完了",
+          // 3列目がない場合（2列構成）は「カバンに入れた」のみに反映
+          // 3列目がある場合は調達状況を反映
+          isProcured: procuredStatus ? procuredStatus === "調達済み" : false,
         }
       })
 
@@ -46,10 +51,10 @@ export default function ChecklistImporter({ onImport }: Props) {
     <>
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="px-4 py-2 rounded-lg bg-dango-green-500 text-white shadow hover:bg-dango-green-600 transition"
-        
+        className="flex-1 h-16 px-4 py-3 rounded-lg bg-dango-green-500 text-white shadow hover:bg-dango-green-600 transition flex flex-col items-center justify-center text-sm"
       >
-        リストを読み込み（CSV形式）
+        <span>リストを読み込み</span>
+        <span>（CSV形式）</span>
       </button>
       <input
         type="file"
