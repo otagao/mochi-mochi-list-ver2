@@ -33,14 +33,11 @@ export default function Checklist() {
     ])
   }
 
-  // 更新
-  const updateItem = (id: string, newText: string) => {
-    setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, text: newText } : item
-      )
-    )
-  }
+  //  ソート
+  const sortedItems = [...items].sort((a, b) => {
+    return Number(a.isChecked) - Number(b.isChecked)
+  })
+
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
@@ -52,7 +49,7 @@ export default function Checklist() {
 
       {/* チェックリスト */}
       <ul className="space-y-2">
-        {items.map(item => (
+        {sortedItems.map(item => (
           <ChecklistItem
             key={item.id}
             item={item}
