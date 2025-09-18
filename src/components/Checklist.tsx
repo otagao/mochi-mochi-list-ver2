@@ -33,6 +33,15 @@ export default function Checklist() {
     ])
   }
 
+  // 更新
+  const updateItem = (id: string, newText: string) => {
+    setItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, text: newText } : item
+      )
+    )
+  }
+
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
       {/* タイトル */}
@@ -49,6 +58,7 @@ export default function Checklist() {
             item={item}
             onToggle={toggleItem}
             onDelete={deleteItem}
+            onUpdate={updateItem}
           />
         ))}
       </ul>

@@ -1,14 +1,45 @@
 "use client"
 
+import { useState } from "react"
 import { Item } from "./items"
 
 type Props = {
   item: Item
   onToggle: (id: string) => void
   onDelete: (id: string) => void
+  onUpdate: (id: string, newText: string) => void
 }
 
-export default function ChecklistItem({ item, onToggle, onDelete }: Props) {
+export default function ChecklistItem({ item, onToggle, onDelete, onUpdate }: Props) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editText, setEditText] = useState(item.text)
+
+  const handleTextClick = () => {
+    if (!item.isChecked) {
+      setIsEditing(true)
+    }
+  }
+
+  const handleSave = () => {
+    if (editText.trim()) {
+      onUpdate(item.id, editText.trim())
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditText(item.text)
+    setIsEditing(false)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSave()
+    } else if (e.key === 'Escape') {
+      handleCancel()
+    }
+  }
+
   return (
     <div
       className={`group relative rounded-2xl border p-4 sm:p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1
@@ -50,13 +81,29 @@ export default function ChecklistItem({ item, onToggle, onDelete }: Props) {
         </div>
 
         {/* テキスト */}
-        <span
-          className={`flex-1 text-lg sm:text-xl font-medium transition-colors duration-200
-            ${item.isChecked ? "line-through text-gray-400" : "text-gray-800"}
-          `}
-        >
-          {item.text}
-        </span>
+        {isEditing ? (
+          <input
+            type="text"
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            onBlur={handleSave}
+            onKeyDown={handleKeyDown}
+            className="flex-1 text-lg sm:text-xl font-medium bg-white border border-dango-pink-300 rounded px-2 py-1 focus:outline-none focus:border-dango-pink-500"
+            autoFocus
+          />
+        ) : (
+          <span
+            onClick={handleTextClick}
+            className={`flex-1 text-lg sm:text-xl font-medium transition-colors duration-200 cursor-pointer
+              ${item.isChecked
+                ? "line-through text-gray-400"
+                : "text-gray-800 hover:text-dango-pink-600"
+              }
+            `}
+          >
+            {item.text}
+          </span>
+        )}
       </div>
 
       {/* 削除ボタン */}
