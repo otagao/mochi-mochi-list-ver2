@@ -29,7 +29,7 @@ export default function ChecklistExporter({ items }: Props) {
       onClick={handleExportCSV}
       className="mt-4 rounded-lg bg-dango-green-500 px-4 py-2 text-white shadow hover:bg-dango-green-600 transition"
     >
-      CSVとしてエクスポート
+      端末に保存（CSV形式）
     </button>
   )
 }

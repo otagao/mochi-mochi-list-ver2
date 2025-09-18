@@ -26,6 +26,11 @@ export default function Percent({ items }: Props) {
 />
 
       </div>
+
+      {/*  100%の場合のみ表示 */}
+  {progress === 100 && (
+    <p className="mt-2 text-pink-600 font-semibold">準備完了！良い旅を♪</p>
+  )}
     </div>
   )
 }
