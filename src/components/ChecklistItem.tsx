@@ -54,7 +54,7 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onTo
         {/* 二段階チェックボックス */}
         {twoStageMode && onToggleProcured && (
           <div className="flex gap-2">
-            {/* 調達チェック */}
+            {/* 家の中にあるチェック */}
             <div className="relative">
               <input
                 type="checkbox"
@@ -72,26 +72,33 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onTo
                   }`}
               >
                 {item.isProcured && (
-                  <span className="text-white text-xs">📦</span>
+                  <span className="text-white text-xs">🏠</span>
                 )}
               </label>
             </div>
 
-            {/* カバンチェック */}
+            {/* カバンに入れたチェック */}
             <div className="relative">
               <input
                 type="checkbox"
                 id={item.id}
                 checked={item.isChecked}
                 onChange={() => onToggle(item.id)}
+                disabled={!item.isProcured}
                 className="sr-only"
               />
               <label
                 htmlFor={item.id}
-                className={`flex items-center justify-center w-6 h-6 rounded-md border cursor-pointer
+                className={`flex items-center justify-center w-6 h-6 rounded-md border
+                  ${!item.isProcured
+                    ? "cursor-not-allowed opacity-50 bg-gray-100 border-gray-200"
+                    : "cursor-pointer"
+                  }
                   ${item.isChecked
                     ? "bg-dango-green-400 border-dango-green-500"
-                    : "bg-white border-gray-300 group-hover:border-dango-pink-300"
+                    : item.isProcured
+                    ? "bg-white border-gray-300 group-hover:border-dango-pink-300"
+                    : "bg-gray-100 border-gray-200"
                   }`}
               >
                 {item.isChecked && (

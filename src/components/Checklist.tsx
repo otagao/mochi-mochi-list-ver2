@@ -19,9 +19,16 @@ export default function Checklist() {
   // チェックボックスのON/OFF
   const toggleItem = (id: string) => {
     setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, isChecked: !item.isChecked } : item
-      )
+      prev.map(item => {
+        if (item.id === id) {
+          // 二段階モードで家の中にない場合はチェックできない
+          if (twoStageMode && !item.isProcured) {
+            return item
+          }
+          return { ...item, isChecked: !item.isChecked }
+        }
+        return item
+      })
     )
   }
 
@@ -30,12 +37,21 @@ export default function Checklist() {
     setItems(prev => prev.filter(item => item.id !== id))
   }
 
-  // 調達チェックのON/OFF
+  // 家の中にあるチェックのON/OFF
   const toggleProcured = (id: string) => {
     setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, isProcured: !item.isProcured } : item
-      )
+      prev.map(item => {
+        if (item.id === id) {
+          const newIsProcured = !item.isProcured
+          // 家の中にないとカバンチェックも外す
+          return {
+            ...item,
+            isProcured: newIsProcured,
+            isChecked: newIsProcured ? item.isChecked : false
+          }
+        }
+        return item
+      })
     )
   }
 
@@ -108,7 +124,7 @@ export default function Checklist() {
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
-          {twoStageMode ? '📦🎒 二段階チェックモード ON' : '二段階チェックモード OFF'}
+          {twoStageMode ? '🏠🎒 二段階チェックモード ON' : '二段階チェックモード OFF'}
         </button>
       </div>
 
@@ -117,12 +133,12 @@ export default function Checklist() {
         <div className="sticky top-0 z-10 bg-gray-100/95 backdrop-blur-sm border-b-2 border-gray-300/50 py-3 mb-4 shadow-sm">
           <div className="flex justify-center gap-8 text-sm font-semibold text-gray-800">
             <div className="flex items-center gap-1 px-3 py-1 bg-dango-pink-300 rounded-full">
-              <span>📦</span>
-              <span>調達</span>
+              <span>🏠</span>
+              <span>家の中にある</span>
             </div>
             <div className="flex items-center gap-1 px-3 py-1 bg-dango-green-300 rounded-full">
               <span>🎒</span>
-              <span>カバン</span>
+              <span>カバンに入れた</span>
             </div>
           </div>
         </div>
