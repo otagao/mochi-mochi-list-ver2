@@ -5,6 +5,7 @@ import ChecklistItem from "./ChecklistItem"
 import ChecklistInput from "./ChecklistInput"
 import ChecklistDropzone from "./ChecklistDropzone"
 import { initialItems, Item } from "./items"
+import ChecklistExporter from "./ChecklistExporter"
 
 export default function Checklist() {
   const [items, setItems] = useState<Item[]>(initialItems)
@@ -48,6 +49,9 @@ export default function Checklist() {
 
       {/* ドロップゾーン */}
       <ChecklistDropzone onAdd={addItem} />
+
+      {/* エクスポートボタン */}
+      <ChecklistExporter items={items} />
     </div>
   )
 }
