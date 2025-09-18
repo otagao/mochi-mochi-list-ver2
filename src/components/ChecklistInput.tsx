@@ -24,7 +24,8 @@ export default function ChecklistInput({ onAdd }: Props) {
         placeholder="追加するアイテム"
         className="flex-1 border rounded p-2"
       />
-      <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+      <button type="submit" className="px-4 py-2 text-white rounded"
+      style={{backgroundColor: "#4a8c52" }}>
         追加
       </button>
     </form>
