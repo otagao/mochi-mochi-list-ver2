@@ -7,6 +7,7 @@ import ChecklistDropzone from "./ChecklistDropzone"
 import Percent from "./percent"
 import { initialItems, Item } from "./items"
 import ChecklistExporter from "./ChecklistExporter"
+import ChecklistImporter from "./ChecklistImporter" 
 
 export default function Checklist() {
   const [items, setItems] = useState<Item[]>(initialItems)
@@ -42,11 +43,10 @@ export default function Checklist() {
     )
   }
 
-  //  ソート
+  // ソート（未完了が上、完了が下）
   const sortedItems = [...items].sort((a, b) => {
     return Number(a.isChecked) - Number(b.isChecked)
   })
-
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
@@ -75,8 +75,11 @@ export default function Checklist() {
       {/* ドロップゾーン */}
       <ChecklistDropzone onAdd={addItem} />
 
-      {/* エクスポートボタン */}
-      <ChecklistExporter items={items} />
+      {/* エクスポート & インポート */}
+      <div className="flex gap-2 mt-4">
+        <ChecklistExporter items={items} />
+        <ChecklistImporter onImport={(imported) => setItems(imported)} />
+      </div>
     </div>
   )
 }
