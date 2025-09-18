@@ -39,7 +39,7 @@ export default function ChecklistDropzone({ onAdd }: Props) {
       className={`mt-4 p-4 border-2 border-dashed rounded cursor-pointer text-center transition-colors
         ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100"}`}
     >
-      <p className="text-gray-500">リストを読み込み（ドラッグ&ドロップ、またはクリック）</p>
+      <p className="text-gray-500">テキストを読み込み（txt形式）</p>
       <input
         type="file"
         ref={fileInputRef}

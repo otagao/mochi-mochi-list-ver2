@@ -7,6 +7,7 @@ import ChecklistDropzone from "./ChecklistDropzone"
 import Percent from "./percent"
 import { initialItems, Item, templates, Template } from "./items"
 import ChecklistExporter from "./ChecklistExporter"
+import ChecklistImporter from "./ChecklistImporter" 
 import TemplateSelector from "./TemplateSelector"
 import TemplateButton from "./TemplateButton"
 
@@ -65,7 +66,7 @@ export default function Checklist() {
     setShowTemplateSelector(true)
   }
 
-  //  ソート
+  // ソート（未完了が上、完了が下）
   const sortedItems = [...items].sort((a, b) => {
     return Number(a.isChecked) - Number(b.isChecked)
   })
@@ -111,8 +112,11 @@ export default function Checklist() {
       {/* ドロップゾーン */}
       <ChecklistDropzone onAdd={addItem} />
 
-      {/* エクスポートボタン */}
-      <ChecklistExporter items={items} />
+      {/* エクスポート & インポート */}
+      <div className="flex gap-2 mt-4">
+        <ChecklistExporter items={items} />
+        <ChecklistImporter onImport={(imported) => setItems(imported)} />
+      </div>
     </div>
   )
 }
