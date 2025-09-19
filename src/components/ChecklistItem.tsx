@@ -9,10 +9,31 @@ type Props = {
   onDelete: (id: string) => void
   onUpdate: (id: string, newText: string) => void
   onToggleProcured?: (id: string) => void
+  onPriorityChange?: (id: string, priority: number) => void
   twoStageMode?: boolean
 }
 
-export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onToggleProcured, twoStageMode }: Props) {
+// 優先度ラベルと色
+const priorityLabels: Record<number, string> = {
+  1: "高",
+  2: "中",
+  3: "低",
+}
+const priorityColors: Record<number, string> = {
+  1: "bg-red-100 border-red-300",
+  2: "bg-yellow-100 border-yellow-300",
+  3: "bg-green-100 border-green-300",
+}
+
+export default function ChecklistItem({
+  item,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onToggleProcured,
+  onPriorityChange,
+  twoStageMode
+}: Props) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(item.text)
 
@@ -35,9 +56,9 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onTo
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSave()
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       handleCancel()
     }
   }
@@ -45,9 +66,10 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onTo
   return (
     <div
       className={`group relative rounded-2xl border p-4 sm:p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1
+        ${priorityColors[item.priority]}
         ${item.isChecked
-          ? "bg-gradient-to-r from-dango-green-50 to-dango-pink-50 border-dango-green-200/50"
-          : "bg-dango-cream-50/80 backdrop-blur-sm border-dango-cream-200/30 hover:bg-dango-cream-100/90"
+          ? "opacity-70"
+          : ""
         }`}
     >
       <div className="flex items-center gap-4">
@@ -142,29 +164,44 @@ export default function ChecklistItem({ item, onToggle, onDelete, onUpdate, onTo
           </div>
         )}
 
-        {/* テキスト */}
-        {isEditing ? (
-          <input
-            type="text"
-            value={editText}
-            onChange={(e) => setEditText(e.target.value)}
-            onBlur={handleSave}
-            onKeyDown={handleKeyDown}
-            className="flex-1 text-lg sm:text-xl font-medium bg-white border border-dango-pink-300 rounded px-2 py-1 focus:outline-none focus:border-dango-pink-500"
-            autoFocus
-          />
-        ) : (
-          <span
-            onClick={handleTextClick}
-            className={`flex-1 text-lg sm:text-xl font-medium transition-colors duration-200 cursor-pointer
-              ${item.isChecked
-                ? "line-through text-gray-400"
-                : "text-gray-800 hover:text-dango-pink-600"
-              }
-            `}
+        {/* テキスト + 優先度ラベル */}
+        <div className="flex-1">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onBlur={handleSave}
+              onKeyDown={handleKeyDown}
+              className="w-full text-lg sm:text-xl font-medium bg-white border border-dango-pink-300 rounded px-2 py-1 focus:outline-none focus:border-dango-pink-500"
+              autoFocus
+            />
+          ) : (
+            <span
+              onClick={handleTextClick}
+              className={`block text-lg sm:text-xl font-medium transition-colors duration-200 cursor-pointer
+                ${item.isChecked
+                  ? "line-through text-gray-400"
+                  : "text-gray-800 hover:text-dango-pink-600"
+                }
+              `}
+            >
+              {item.text} （優先度: {priorityLabels[item.priority]}）
+            </span>
+          )}
+        </div>
+
+        {/* 優先度変更ドロップダウン */}
+        {onPriorityChange && (
+          <select
+            value={item.priority}
+            onChange={(e) => onPriorityChange(item.id, Number(e.target.value))}
+            className="ml-2 text-sm border rounded px-1 py-0.5"
           >
-            {item.text}
-          </span>
+            <option value={1}>高</option>
+            <option value={2}>中</option>
+            <option value={3}>低</option>
+          </select>
         )}
       </div>
 
