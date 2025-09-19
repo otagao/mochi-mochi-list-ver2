@@ -6,13 +6,29 @@ interface Props {
   items: Item[]
 }
 
+// 優先度を数値 → ラベルに変換
+const priorityToLabel = (priority: number): string => {
+  switch (priority) {
+    case 1:
+      return "高"
+    case 2:
+      return "中"
+    case 3:
+      return "低"
+    default:
+      return "未設定"
+  }
+}
+
 export default function ChecklistExporter({ items }: Props) {
   const handleExportCSV = () => {
     const csvContent = items
-      .map(item => `"${item.text}",${item.isChecked ? "完了" : "未完了"},${item.isProcured ? "調達済み" : "未調達"}`)
+      .map(item =>
+        `"${item.text}",${item.isChecked ? "完了" : "未完了"},${item.isProcured ? "調達済み" : "未調達"},${priorityToLabel(item.priority)}`
+      )
       .join("\n")
 
-    const csvHeader = `"項目名","状態","調達状況"\n`
+    const csvHeader = `"項目名","状態","調達状況","優先度"\n`
     const blob = new Blob([csvHeader + csvContent], { type: "text/csv;charset=utf-8;" })
 
     const url = URL.createObjectURL(blob)

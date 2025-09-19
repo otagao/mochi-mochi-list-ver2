@@ -71,8 +71,8 @@ export default function Checklist() {
     )
   }
 
-  // 追加
-  const addItem = (text: string, priority: number) => {
+  // 追加（✅ priority にデフォルト値をつけた）
+  const addItem = (text: string, priority: number = 2) => {
     setItems(prev =>
       sortItems([
         ...prev,
@@ -109,7 +109,7 @@ export default function Checklist() {
       ...item,
       id: `${template.id}-${index}-${Date.now()}`,
       isProcured: false,
-      priority: item.priority ?? 2, // デフォルト: 中
+      priority: item.priority ?? 2, // ✅ デフォルト: 中
     }))
     setItems(sortItems(itemsWithUniqueIds))
     setShowTemplateSelector(false)
@@ -190,7 +190,7 @@ export default function Checklist() {
             onDelete={deleteItem}
             onUpdate={updateItem}
             onToggleProcured={toggleProcured}
-            onPriorityChange={updatePriority} // ← 追加
+            onPriorityChange={updatePriority}
             twoStageMode={twoStageMode}
           />
         ))}
@@ -199,8 +199,8 @@ export default function Checklist() {
       {/* 入力フォーム */}
       <ChecklistInput onAdd={addItem} />
 
-      {/* ドロップゾーン */}
-      <ChecklistDropzone onAdd={(text) => addItem(text, 2)} /> {/* デフォルト: 中 */}
+      {/* ドロップゾーン（✅ priority のデフォルトでOK） */}
+      <ChecklistDropzone onAdd={(text) => addItem(text)} />
 
       {/* エクスポート & インポート */}
       <div className="flex gap-3 mt-4 justify-center">

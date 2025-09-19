@@ -7,6 +7,20 @@ type Props = {
   onImport: (items: Item[]) => void
 }
 
+// 優先度ラベル → 数値変換
+const priorityFromLabel = (label: string): number => {
+  switch (label) {
+    case "高":
+      return 1
+    case "中":
+      return 2
+    case "低":
+      return 3
+    default:
+      return 2 // デフォルトは中
+  }
+}
+
 export default function ChecklistImporter({ onImport }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -17,28 +31,22 @@ export default function ChecklistImporter({ onImport }: Props) {
     const reader = new FileReader()
     reader.onload = () => {
       const content = reader.result as string
-
-      // 行ごとに分割
       const lines = content.split("\n").filter(line => line.trim() !== "")
-      // 先頭行（ヘッダー）をスキップ
-      const dataLines = lines.slice(1)
+      const dataLines = lines.slice(1) // ヘッダーを除外
 
       const importedItems: Item[] = dataLines.map((line, index) => {
-        // CSV行をパース（カンマで分割、引用符を考慮）
         const columns = line.split(",")
-
-        // " で囲まれているので除去
         const text = columns[0]?.replace(/^"|"$/g, "") || ""
         const status = columns[1]?.trim()
         const procuredStatus = columns[2]?.trim()
+        const priorityLabel = columns[3]?.trim() || "中"
 
         return {
-          id: Date.now().toString() + index, // 新しいユニークIDを割り振る
+          id: Date.now().toString() + index,
           text,
           isChecked: status === "完了",
-          // 3列目がない場合（2列構成）は「カバンに入れた」のみに反映
-          // 3列目がある場合は調達状況を反映
-          isProcured: procuredStatus ? procuredStatus === "調達済み" : false,
+          isProcured: procuredStatus === "調達済み",
+          priority: priorityFromLabel(priorityLabel), // ✅ 追加
         }
       })
 
