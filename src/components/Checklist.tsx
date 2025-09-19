@@ -11,6 +11,18 @@ import ChecklistImporter from "./ChecklistImporter"
 import TemplateSelector from "./TemplateSelector"
 import TemplateButton from "./TemplateButton"
 
+// ✅ 優先度付きのソート関数
+function sortItems(items: Item[]): Item[] {
+  return [...items].sort((a, b) => {
+    // チェックの有無で先後
+    if (a.isChecked !== b.isChecked) {
+      return a.isChecked ? 1 : -1
+    }
+    // 優先度で比較（1=高, 2=中, 3=低）
+    return a.priority - b.priority
+  })
+}
+
 export default function Checklist() {
   const [items, setItems] = useState<Item[]>([])
   const [showTemplateSelector, setShowTemplateSelector] = useState(true)
@@ -19,16 +31,18 @@ export default function Checklist() {
   // チェックボックスのON/OFF
   const toggleItem = (id: string) => {
     setItems(prev =>
-      prev.map(item => {
-        if (item.id === id) {
-          // 二段階モードで家の中にない場合はチェックできない
-          if (twoStageMode && !item.isProcured) {
-            return item
+      sortItems(
+        prev.map(item => {
+          if (item.id === id) {
+            // 二段階モードで家の中にない場合はチェックできない
+            if (twoStageMode && !item.isProcured) {
+              return item
+            }
+            return { ...item, isChecked: !item.isChecked }
           }
-          return { ...item, isChecked: !item.isChecked }
-        }
-        return item
-      })
+          return item
+        })
+      )
     )
   }
 
@@ -40,34 +54,51 @@ export default function Checklist() {
   // 家の中にあるチェックのON/OFF
   const toggleProcured = (id: string) => {
     setItems(prev =>
-      prev.map(item => {
-        if (item.id === id) {
-          const newIsProcured = !item.isProcured
-          // 家の中にないとカバンチェックも外す
-          return {
-            ...item,
-            isProcured: newIsProcured,
-            isChecked: newIsProcured ? item.isChecked : false
+      sortItems(
+        prev.map(item => {
+          if (item.id === id) {
+            const newIsProcured = !item.isProcured
+            // 家の中にないとカバンチェックも外す
+            return {
+              ...item,
+              isProcured: newIsProcured,
+              isChecked: newIsProcured ? item.isChecked : false
+            }
           }
-        }
-        return item
-      })
+          return item
+        })
+      )
     )
   }
 
   // 追加
-  const addItem = (text: string) => {
-    setItems(prev => [
-      ...prev,
-      { id: Date.now().toString(), text, isChecked: false, isProcured: false },
-    ])
+  const addItem = (text: string, priority: number) => {
+    setItems(prev =>
+      sortItems([
+        ...prev,
+        { id: Date.now().toString(), text, isChecked: false, isProcured: false, priority },
+      ])
+    )
   }
 
   // 更新
   const updateItem = (id: string, newText: string) => {
     setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, text: newText } : item
+      sortItems(
+        prev.map(item =>
+          item.id === id ? { ...item, text: newText } : item
+        )
+      )
+    )
+  }
+
+  // 優先度変更
+  const updatePriority = (id: string, priority: number) => {
+    setItems(prev =>
+      sortItems(
+        prev.map(item =>
+          item.id === id ? { ...item, priority } : item
+        )
       )
     )
   }
@@ -77,9 +108,10 @@ export default function Checklist() {
     const itemsWithUniqueIds = template.items.map((item, index) => ({
       ...item,
       id: `${template.id}-${index}-${Date.now()}`,
-      isProcured: false
+      isProcured: false,
+      priority: item.priority ?? 2, // デフォルト: 中
     }))
-    setItems(itemsWithUniqueIds)
+    setItems(sortItems(itemsWithUniqueIds))
     setShowTemplateSelector(false)
   }
 
@@ -93,10 +125,8 @@ export default function Checklist() {
     setShowTemplateSelector(true)
   }
 
-  // ソート（未完了が上、完了が下）
-  const sortedItems = [...items].sort((a, b) => {
-    return Number(a.isChecked) - Number(b.isChecked)
-  })
+  // 優先度付きでソート
+  const sortedItems = sortItems(items)
 
   // テンプレート選択中の場合
   if (showTemplateSelector) {
@@ -160,6 +190,7 @@ export default function Checklist() {
             onDelete={deleteItem}
             onUpdate={updateItem}
             onToggleProcured={toggleProcured}
+            onPriorityChange={updatePriority} // ← 追加
             twoStageMode={twoStageMode}
           />
         ))}
@@ -169,12 +200,12 @@ export default function Checklist() {
       <ChecklistInput onAdd={addItem} />
 
       {/* ドロップゾーン */}
-      <ChecklistDropzone onAdd={addItem} />
+      <ChecklistDropzone onAdd={(text) => addItem(text, 2)} /> {/* デフォルト: 中 */}
 
       {/* エクスポート & インポート */}
       <div className="flex gap-3 mt-4 justify-center">
         <ChecklistExporter items={items} />
-        <ChecklistImporter onImport={(imported) => setItems(imported)} />
+        <ChecklistImporter onImport={(imported) => setItems(sortItems(imported))} />
       </div>
     </div>
   )
