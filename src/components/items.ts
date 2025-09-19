@@ -2,7 +2,7 @@ export interface Item {
   id: string
   text: string
   isChecked: boolean
-  isProcured?: boolean // 調達したかどうか（二段階チェックリスト用）
+  isProcured?: boolean // 家の中にあるかどうか（二段階チェックリスト用）
 }
 
 export interface Template {
