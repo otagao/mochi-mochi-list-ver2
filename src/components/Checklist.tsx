@@ -5,11 +5,12 @@ import ChecklistItem from "./ChecklistItem"
 import ChecklistInput from "./ChecklistInput"
 import ChecklistDropzone from "./ChecklistDropzone"
 import Percent from "./percent"
-import { initialItems, Item, templates, Template } from "./items"
+import { Item, templates, Template } from "./items"
 import ChecklistExporter from "./ChecklistExporter"
-import ChecklistImporter from "./ChecklistImporter" 
+import ChecklistImporter from "./ChecklistImporter"
 import TemplateSelector from "./TemplateSelector"
 import TemplateButton from "./TemplateButton"
+import ShareButton from "./ShareButton"
 
 // ✅ 優先度付きのソート関数
 function sortItems(items: Item[]): Item[] {
@@ -201,6 +202,11 @@ export default function Checklist() {
 
       {/* ドロップゾーン（✅ priority のデフォルトでOK） */}
       <ChecklistDropzone onAdd={(text) => addItem(text)} />
+
+      {/* 共有ボタン */}
+      <div className="mt-4">
+        <ShareButton items={items} />
+      </div>
 
       {/* エクスポート & インポート */}
       <div className="flex gap-3 mt-4 justify-center">
