@@ -11,6 +11,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'もちもちリスト',
   description: 'チェックボックス式のかわいい持ち物リスト',
+  icons: {
+    icon: "/icon.ico",
+  }
 }
 
 export default function RootLayout({
