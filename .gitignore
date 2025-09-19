@@ -19,6 +19,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -39,3 +40,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase cache and logs
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+
+# notes
+DEPLOY.md
