@@ -19,10 +19,19 @@ const priorityLabels: Record<number, string> = {
   2: "中",
   3: "低",
 }
+
+// 優先度ごとの背景・ボーダー色
 const priorityColors: Record<number, string> = {
   1: "bg-red-100 border-red-300",
   2: "bg-yellow-100 border-yellow-300",
   3: "bg-green-100 border-green-300",
+}
+
+// 優先度ごとの文字色（ホバー時またはチェック済み時に適用）
+const priorityTextColors: Record<number, string> = {
+  1: "text-dango-pink-600",
+  2: "text-dango-cream-700",
+  3: "text-dango-green-600",
 }
 
 export default function ChecklistItem({
@@ -38,15 +47,11 @@ export default function ChecklistItem({
   const [editText, setEditText] = useState(item.text)
 
   const handleTextClick = () => {
-    if (!item.isChecked) {
-      setIsEditing(true)
-    }
+    if (!item.isChecked) setIsEditing(true)
   }
 
   const handleSave = () => {
-    if (editText.trim()) {
-      onUpdate(item.id, editText.trim())
-    }
+    if (editText.trim()) onUpdate(item.id, editText.trim())
     setIsEditing(false)
   }
 
@@ -56,27 +61,26 @@ export default function ChecklistItem({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSave()
-    } else if (e.key === "Escape") {
-      handleCancel()
-    }
+    if (e.key === "Enter") handleSave()
+    else if (e.key === "Escape") handleCancel()
   }
+
+  // テキストのクラスを動的に生成
+  const textClass = `block text-lg sm:text-xl font-medium transition-colors duration-200 cursor-pointer ${
+    item.isChecked
+      ? `line-through ${priorityTextColors[item.priority]}`
+      : `text-gray-800 hover:${priorityTextColors[item.priority]}`
+  }`
 
   return (
     <div
       className={`group relative rounded-2xl border p-4 sm:p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1
-        ${priorityColors[item.priority]}
-        ${item.isChecked
-          ? "opacity-70"
-          : ""
-        }`}
+        ${priorityColors[item.priority]}`}
     >
       <div className="flex items-center gap-4">
         {/* 二段階チェックボックス */}
         {twoStageMode && onToggleProcured && (
           <div className="flex gap-2">
-            {/* 家の中にあるチェック */}
             <div className="relative">
               <input
                 type="checkbox"
@@ -93,13 +97,10 @@ export default function ChecklistItem({
                     : "bg-white border-gray-300 group-hover:border-dango-pink-300"
                   }`}
               >
-                {item.isProcured && (
-                  <span className="text-white text-xs">🏠</span>
-                )}
+                {item.isProcured && <span className="text-white text-xs">🏠</span>}
               </label>
             </div>
 
-            {/* カバンに入れたチェック */}
             <div className="relative">
               <input
                 type="checkbox"
@@ -123,9 +124,7 @@ export default function ChecklistItem({
                     : "bg-gray-100 border-gray-200"
                   }`}
               >
-                {item.isChecked && (
-                  <span className="text-white text-xs">🎒</span>
-                )}
+                {item.isChecked && <span className="text-white text-xs">🎒</span>}
               </label>
             </div>
           </div>
@@ -177,15 +176,7 @@ export default function ChecklistItem({
               autoFocus
             />
           ) : (
-            <span
-              onClick={handleTextClick}
-              className={`block text-lg sm:text-xl font-medium transition-colors duration-200 cursor-pointer
-                ${item.isChecked
-                  ? "line-through text-gray-400"
-                  : "text-gray-800 hover:text-dango-pink-600"
-                }
-              `}
-            >
+            <span onClick={handleTextClick} className={textClass}>
               {item.text} （優先度: {priorityLabels[item.priority]}）
             </span>
           )}
